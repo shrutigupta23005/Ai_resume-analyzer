@@ -8,6 +8,7 @@ const helmet = require('helmet');
 const morgan = require('morgan');
 const path = require('path');
 const connectDB = require('./config/db');
+console.log("connectDB =", connectDB);
 const env = require('./config/env');
 const errorHandler = require('./middleware/errorHandler');
 const { generalLimiter } = require('./middleware/rateLimiter');
@@ -63,7 +64,11 @@ app.use(errorHandler);
 // ---------------------
 const startServer = async () => {
   try {
+
+    console.log("Mongo URI =", process.env.MONGODB_URI);
+
     await connectDB();
+
     app.listen(env.PORT, () => {
       console.log(`\n🚀 Server running in ${env.NODE_ENV} mode on port ${env.PORT}`);
       console.log(`📡 API: http://localhost:${env.PORT}/api/health\n`);

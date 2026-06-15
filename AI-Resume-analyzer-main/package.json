@@ -11,10 +11,13 @@
     "build": "cd client && npm run build"
   },
   "dependencies": {
+    "axios": "^1.16.1",
+    "bcryptjs": "^3.0.3",
     "concurrently": "^8.2.2",
     "leaflet": "^1.9.4",
     "mongodb": "^7.2.0",
     "mongoose": "^9.6.2",
+    "nodemailer": "^8.0.8",
     "react-leaflet": "^5.0.0",
     "react-router-dom": "^7.15.0"
   },

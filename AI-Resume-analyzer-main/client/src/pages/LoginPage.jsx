@@ -59,6 +59,14 @@ export default function LoginPage() {
           <button type="submit" disabled={loading} className="btn-primary w-full !py-3.5 disabled:opacity-50 flex items-center justify-center gap-2" id="login-submit">
             {loading ? <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" /> : 'Sign In'}
           </button>
+          <div className="text-right mt-2">
+  <Link
+    to="/forgot-password"
+    className="text-primary-600 dark:text-primary-400 text-sm hover:underline"
+  >
+    Forgot Password?
+  </Link>
+</div>
         </form>
         <p className="text-center text-sm text-surface-500 mt-6">
           Don't have an account? <Link to="/signup" className="text-primary-600 dark:text-primary-400 font-medium hover:underline">Sign Up</Link>

@@ -10,6 +10,9 @@ import JobMatchPage from './pages/JobMatchPage';
 import AIImprovementsPage from './pages/AIImprovementsPage';
 import HistoryPage from './pages/HistoryPage';
 import DashboardLayout from './components/layout/DashboardLayout';
+import ForgotPassword from './pages/ForgotPassword';
+import VerifyOtp from './pages/VerifyOtp';
+import ResetPassword from './pages/ResetPassword';
 
 // Protected route wrapper
 const ProtectedRoute = ({ children }) => {
@@ -24,6 +27,9 @@ export default function App() {
       <Route path="/" element={<LandingPage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/signup" element={<SignupPage />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/verify-otp" element={<VerifyOtp />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
       <Route path="/dashboard" element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>
         <Route index element={<DashboardPage />} />
         <Route path="upload" element={<UploadPage />} />

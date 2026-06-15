@@ -2,6 +2,9 @@
 // Auth Controller - Handles user registration, login, profile
 // =============================================================
 const User = require('../models/User');
+const bcrypt = require('bcryptjs');
+const Otp = require('../models/Otp');
+const transporter = require('../config/email');
 const { generateToken } = require('../middleware/auth');
 
 // @desc    Register a new user
@@ -57,4 +60,145 @@ exports.getMe = async (req, res, next) => {
     const user = await User.findById(req.user.id);
     res.json({ success: true, data: { user } });
   } catch (error) { next(error); }
+};
+
+// Send OTP
+exports.sendOTP = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+    await Otp.deleteMany({ email });
+
+    await Otp.create({
+      email,
+      otp
+    });
+
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: "Resume Analyzer Verification OTP",
+      html: `<h2>Your OTP is ${otp}</h2>`
+    });
+
+    res.json({
+      success: true,
+      message: "OTP sent successfully"
+    });
+
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Verify OTP
+exports.verifyOTP = async (req, res, next) => {
+  try {
+    const { email, otp } = req.body;
+
+    const otpRecord = await Otp.findOne({
+      email,
+      otp
+    });
+
+    if (!otpRecord) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid OTP"
+      });
+    }
+
+    res.json({
+      success: true,
+      message: "OTP verified successfully"
+    });
+
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Forgot Password
+exports.forgotPassword = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found"
+      });
+    }
+
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+    await Otp.deleteMany({ email });
+
+    await Otp.create({
+      email,
+      otp
+    });
+
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: "Password Reset OTP",
+      html: `<h2>Your Password Reset OTP is ${otp}</h2>`
+    });
+
+    res.json({
+      success: true,
+      message: "Password reset OTP sent"
+    });
+
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Reset Password
+exports.resetPassword = async (req, res, next) => {
+  try {
+
+    const {
+      email,
+      otp,
+      newPassword
+    } = req.body;
+    console.log("EMAIL:", email);
+    console.log("OTP:", otp);
+    const otpRecord = await Otp.findOne({
+      email,
+      otp
+    });
+
+    if (!otpRecord) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid OTP"
+      });
+    }
+
+    const hashedPassword =
+      await bcrypt.hash(newPassword, 10);
+
+    await User.findOneAndUpdate(
+      { email },
+      { password: hashedPassword }
+    );
+
+    await Otp.deleteMany({ email });
+
+    res.json({
+      success: true,
+      message: "Password reset successful"
+    });
+
+  } catch (error) {
+    next(error);
+  }
 };
