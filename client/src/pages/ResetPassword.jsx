@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 const ResetPassword = () => {
-  const [email, setEmail] = useState("");
-  const [otp, setOtp] = useState("");
+  const location = useLocation();
+  const [email, setEmail] = useState(location.state?.email || "");
+  const [otp, setOtp] = useState(location.state?.otp || "");
   const [newPassword, setNewPassword] = useState("");
   const navigate = useNavigate();
 
@@ -12,7 +13,7 @@ const ResetPassword = () => {
 
     try {
       const res = await axios.post(
-        "http://localhost:5000/api/auth/reset-password",
+        "/api/auth/reset-password",
         {
           email: email.trim(),
           otp: otp.trim(),

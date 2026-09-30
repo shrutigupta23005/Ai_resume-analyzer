@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const VerifyOtp = () => {
-  const [email, setEmail] = useState("");
+  const location = useLocation();
+  const [email, setEmail] = useState(location.state?.email || "");
   const [otp, setOtp] = useState("");
 
   const navigate = useNavigate();
@@ -13,7 +14,7 @@ const VerifyOtp = () => {
 
     try {
       const res = await axios.post(
-        "http://localhost:5000/api/auth/verify-otp",
+        "/api/auth/verify-otp",
         {
           email,
           otp,
@@ -23,7 +24,7 @@ const VerifyOtp = () => {
       alert(res.data.message);
 
       navigate("/reset-password", {
-        state: { email },
+        state: { email, otp },
       });
 
     } catch (error) {
